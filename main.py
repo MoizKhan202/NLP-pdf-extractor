@@ -38,7 +38,7 @@ def retrieve_relevant_chunk(query, chunks, embedder):
     return chunks[most_relevant_idx]
 
 # Streamlit UI
-st.title("Fast and Accurate PDF Question Answering")
+st.title("MHU PDF Question Answering")
 st.write("Upload a PDF, and ask questions about its content!")
 
 uploaded_file = st.file_uploader("Upload your PDF file", type=["pdf"])
