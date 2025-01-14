@@ -23,22 +23,28 @@ if uploaded_file is not None:
         with st.expander("Extracted PDF Text"):
             st.write(text)
 
-        # Question input
+        # Load a more accurate Hugging Face model for question-answering
+        @st.cache_resource
+        def load_qa_pipeline():
+            return pipeline("question-answering", model="deepset/roberta-base-squad2")
+
+        qa_pipeline = load_qa_pipeline()
+
+        # Input for questions
         question = st.text_input("Ask a question about the PDF content:")
 
         if question:
-            # Use Hugging Face pipeline for Q&A
-            qa_pipeline = pipeline("question-answering", model="distilbert-base-cased-distilled-squad")
-
             # Get the answer from the model
             result = qa_pipeline(question=question, context=text)
-            answer = result["answer"]
 
-            # Display the answer
-            st.subheader("Answer:")
-            st.write(answer)
+            # Extract answer and display
+            answer = result.get("answer", None)
+            if answer and answer.strip():
+                st.subheader("Answer:")
+                st.write(answer)
+            else:
+                st.error("Sorry, I couldn't find a suitable answer. Try rephrasing the question.")
     else:
         st.error("No text could be extracted from the PDF. Please upload a valid PDF.")
 else:
     st.info("Please upload a PDF to start.")
-
